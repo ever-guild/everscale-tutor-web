@@ -1,0 +1,35 @@
+{
+  "name": "everscale-tutor-web",
+  "version": "1.0.0",
+  "description": "Everscale awesome DApp",
+  "main": "App.html",
+  "type": "commonjs",
+  "scripts": {
+    "nvm": "echo $npm_package_engines_node | cut -d'=' -f2",
+    "build-asset": "convert-svg-to-png --width 48 asset/icon.svg",
+    "build-web": "yarn build-deps && parcel build --no-source-maps --out-dir dist --out-file index.html $npm_package_main",
+    "build-abi": "yarn contract-wrap && node -e 'console.log(`export default ${JSON.stringify(require(\"./build/App.abi\").abi)} as const`)' > AppAbi.ts",
+    "build-deps": "yarn build-asset && yarn build-abi",
+    "contract-wrap": "yarn contract-compile && everdev js wrap --export commonjs-default --output App.abi.js build/App",
+    "contract-compile": "everdev sol compile --code --output-dir build App.sol",
+    "build": "yarn build-web",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "yarn build && serve -s dist -l 3000",
+    "prestart": "yarn build-deps",
+    "start": "parcel $npm_package_main"
+  },
+  "license": "ISC",
+  "engines": {
+    "node": ">=16"
+  },
+  "devDependencies": {
+    "convert-svg-to-png": "^0.5.0",
+    "parcel": "^2.3.1",
+    "parcel-bundler": "^1.12.5",
+    "serve": "^13.0.2",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "everscale-inpage-provider": "^0.3.8"
+  }
+}
