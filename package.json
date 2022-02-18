@@ -13,6 +13,7 @@
     "contract-wrap": "yarn contract-compile && everdev js wrap --export commonjs-default --output App.abi.js build/App",
     "contract-compile": "everdev sol compile --code --output-dir build src/App.sol",
     "contract-deploy": "yarn contract-compile && everdev contract deploy --value 1000000000 build/App && yarn contract-addr && yarn contract-addr-cat",
+    "contract-deploy-local": "npx everdev se reset && npx everdev network default localnet && yarn contract-deploy",
     "contract-addr": "net=$(npx everdev network list | grep Default | cut -d' ' -f1); printf '\"%s\": {\"App\": \"%s\"},\n' $net $(everdev contract info build/App | grep Address | cut -d ' ' -f 4) > build/App.$net.addr",
     "contract-addr-cat": "printf 'export default {%s}\n' \"$(cat $(ls build/*.addr))\" > build/App.addr.ts",
     "clear": "rm -fr dist build/App.localnet.addr",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "convert-svg-to-png": "^0.5.0",
+    "everdev": "^1.1.1",
     "gh-pages": "^3.2.3",
     "parcel": "^2.3.1",
     "parcel-bundler": "^1.12.5",
