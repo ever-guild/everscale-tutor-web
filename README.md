@@ -38,9 +38,13 @@ npx everdev network default testnet
 ```shell
 yarn contract-deploy
 ```
-shortcut for redeploy into `localnet`
+shortcut for **redeploy** into `localnet`
 ```shell
 yarn contract-deploy-local
+```
+shortcut for **deploy** into `testnet`
+```shell
+yarn contract-deploy-testnet
 ```
 
 ## Develop
