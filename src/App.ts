@@ -93,7 +93,7 @@ async function checkConnect() {
         const connectText = elem => {
             const disabled = !contractAddress(network);
             if ("disabled" in elem) elem.disabled = disabled;
-            elem.innerText = disabled ? `Contract not deployd into ${network}` : `Connect with ${network} for interact contract`;
+            elem.innerText = disabled ? `Contract not deployed into ${network}` : `Connect with ${network} for interact contract`;
         };
         behavior('connect', connectText);
     } else {
