@@ -1,7 +1,6 @@
 pragma ton-solidity >= 0.35.0;
 pragma AbiHeader expire;
 
-// This is class that describes you smart contract.
 contract App {
     // Contract can have an instance variables.
     // In this example instance variable `timestamp`
@@ -9,13 +8,7 @@ contract App {
     // or `touch` function call.
     uint32 public timestamp;
 
-    // Contract can have a `constructor`.
-    // The function that will be called when contract will be deployed to the blockchain.
-    // In this example constructor adds current time to the instance variable.
-    // All contracts need call `tvm.accept()` for succeeded deploy.
-    constructor() public {
-        // Check that contract's public key is set
-        require(tvm.pubkey() != 0, 101);
+    modifier onlyPublisher {
         // Check that message has signature (msg.pubkey() is not zero) and
         // message is signed with the owner's private key
         require(msg.pubkey() == tvm.pubkey(), 102);
@@ -23,6 +16,20 @@ contract App {
         // current transaction. This actions required to process external
         // messages, which bring no value (hence no gas) with themselves.
         tvm.accept();
+        _;
+    }
+
+    function destruct(address beneficiary) onlyPublisher external {
+        selfdestruct(beneficiary);
+    }
+
+    // Contract can have a `constructor`.
+    // The function that will be called when contract will be deployed to the blockchain.
+    // In this example constructor adds current time to the instance variable.
+    // All contracts need call `tvm.accept()` for succeeded deploy.
+    constructor() onlyPublisher public {
+        // Check that contract's public key is set
+        require(tvm.pubkey() != 0, 101);
         timestamp = now;
     }
 
@@ -32,10 +39,6 @@ contract App {
 
     // Updates variable `timestamp` with current blockchain time.
     function touch() external {
-        // Each function that accepts external message must check that
-        // message is correctly signed.
-        require(msg.pubkey() == tvm.pubkey(), 102);
-        // Tells to the TVM that we accept this message.
         tvm.accept();
         // Update timestamp
         timestamp = now;

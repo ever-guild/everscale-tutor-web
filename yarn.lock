@@ -3367,10 +3367,10 @@ everdev@^1.1.1:
     request "^2.88.2"
     unzip-stream "^0.3.1"
 
-everscale-inpage-provider@^0.3.8:
-  version "0.3.8"
-  resolved "https://registry.yarnpkg.com/everscale-inpage-provider/-/everscale-inpage-provider-0.3.8.tgz#9e57c15513e5403f9b81be2730a062f05adabdad"
-  integrity sha512-aXWxM/gAs5fUGJpTRfx5MQIaGgGq3uKoFbu2I/kdomgTdIJBrNm8Os3i7KFq+AAz0SMlktniDsh4lORj8SN8Uw==
+everscale-inpage-provider@^0.3.9:
+  version "0.3.9"
+  resolved "https://registry.yarnpkg.com/everscale-inpage-provider/-/everscale-inpage-provider-0.3.9.tgz#4b30413b680439de6e7f4e4b7041820aa51dcc6a"
+  integrity sha512-2uy8GjM5o/6bw+P+iqN/h7yDN1x6OHIMgWOTWenElZRcZ9076ULwDUEbTTji5gQYMj7tFYdpf2E/UsH1UcSRZQ==
 
 evp_bytestokey@^1.0.0, evp_bytestokey@^1.0.3:
   version "1.0.3"
