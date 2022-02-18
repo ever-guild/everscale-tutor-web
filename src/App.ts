@@ -4,7 +4,7 @@ import {
     TvmException,
 } from 'everscale-inpage-provider'
 const ever = new ProviderRpcClient()
-import abi from './AppAbi'
+import abi from '../build/App.abi'
 
 function behavior(name: string, fn: (elem: HTMLElement) => void) {
     document.querySelectorAll(`[data-behavior=${name}]`).forEach(fn)
@@ -13,7 +13,7 @@ function behavior(name: string, fn: (elem: HTMLElement) => void) {
 function requestPermissions() {
     return ever.requestPermissions({
         permissions: [
-            //'basic',
+            'basic',
             'accountInteraction',
         ],
     })
@@ -42,10 +42,12 @@ async function App() {
     } else {
         behavior('extension',elem => elem.style.display = 'none')
         behavior('main',elem => elem.style.display = 'block')
-        behavior('connect', elem => elem.onclick = requestPermissions)
+        behavior('connect', elem => elem.onclick = requestPermissions )
     }
     await ever.ensureInitialized();
-    setNetworkChanged((await ever.getProviderState()).selectedConnection);
+    const providerState = await ever.getProviderState();
+    console.log(providerState)
+    setNetworkChanged(providerState.selectedConnection);
     (await ever.subscribe('networkChanged')).on('data', event => {
         setNetworkChanged(event.selectedConnection);
     })
