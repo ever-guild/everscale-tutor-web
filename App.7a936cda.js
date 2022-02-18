@@ -1050,7 +1050,8 @@ else {
  */
 async function hasEverscaleProvider() {
     await ensurePageLoaded;
-    return window.__hasEverscaleProvider === true;
+    return window.__hasEverscaleProvider === true ||
+        window.hasTonProvider === true;
 }
 exports.hasEverscaleProvider = hasEverscaleProvider;
 /**
@@ -1088,7 +1089,7 @@ class ProviderRpcClient {
             },
         });
         // Initialize provider with injected object by default
-        this._provider = window.__ever;
+        this._provider = window.__ever || window.ton;
         if (this._provider != null) {
             // Provider as already injected
             this._mainInitializationPromise = Promise.resolve();
@@ -1102,13 +1103,14 @@ class ProviderRpcClient {
                     return;
                 }
                 // Wait injected provider initialization otherwise
-                this._provider = window.__ever;
+                this._provider = window.__ever || window.ton;
                 if (this._provider != null) {
                     resolve();
                 }
                 else {
-                    window.addEventListener('ever#initialized', (_data) => {
-                        this._provider = window.__ever;
+                    const eventName = window.__hasEverscaleProvider === true ? 'ever#initialized' : 'ton#initialized';
+                    window.addEventListener(eventName, (_data) => {
+                        this._provider = window.__ever || window.ton;
                         resolve();
                     });
                 }
@@ -1670,6 +1672,13 @@ exports.default = {
     "inputs": [],
     "outputs": []
   }, {
+    "name": "destruct",
+    "inputs": [{
+      "name": "beneficiary",
+      "type": "address"
+    }],
+    "outputs": []
+  }, {
     "name": "renderHelloWorld",
     "inputs": [],
     "outputs": [{
@@ -1725,7 +1734,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = {
   "testnet": {
-    "App": "0:706a1e011e8faaeb2949f95c8673022d470e523e5fddc5b230591397675c1dd3"
+    "App": "0:440b5e49eff4ba34efd9a66afcd7c9334566ca4f16723657c2879316fde999c6"
   }
 };
 },{}],"App.ts":[function(require,module,exports) {
@@ -1896,6 +1905,208 @@ function behavior(name, fn) {
   document.querySelectorAll("[data-behavior=".concat(name, "]")).forEach(fn);
 }
 
+function timestampAction() {
+  return __awaiter(this, void 0, void 0, function () {
+    var contract, out_1, error_1;
+    return __generator(this, function (_a) {
+      switch (_a.label) {
+        case 0:
+          return [4
+          /*yield*/
+          , Contract()];
+
+        case 1:
+          contract = _a.sent();
+          _a.label = 2;
+
+        case 2:
+          _a.trys.push([2, 4,, 5]);
+
+          return [4
+          /*yield*/
+          , contract.methods.timestamp({}).call()];
+
+        case 3:
+          out_1 = _a.sent();
+          behavior('out', function (elem) {
+            return elem.innerText = out_1.timestamp;
+          });
+          return [3
+          /*break*/
+          , 5];
+
+        case 4:
+          error_1 = _a.sent();
+          console.error(error_1);
+          return [3
+          /*break*/
+          , 5];
+
+        case 5:
+          return [2
+          /*return*/
+          ];
+      }
+    });
+  });
+}
+
+function renderHelloWorldAction() {
+  return __awaiter(this, void 0, void 0, function () {
+    var contract, out_2, error_2;
+    return __generator(this, function (_a) {
+      switch (_a.label) {
+        case 0:
+          return [4
+          /*yield*/
+          , Contract()];
+
+        case 1:
+          contract = _a.sent();
+          _a.label = 2;
+
+        case 2:
+          _a.trys.push([2, 4,, 5]);
+
+          return [4
+          /*yield*/
+          , contract.methods.renderHelloWorld({}).call()];
+
+        case 3:
+          out_2 = _a.sent();
+          behavior('out', function (elem) {
+            return elem.innerText = out_2.value0;
+          });
+          return [3
+          /*break*/
+          , 5];
+
+        case 4:
+          error_2 = _a.sent();
+          console.error(error_2);
+          return [3
+          /*break*/
+          , 5];
+
+        case 5:
+          return [2
+          /*return*/
+          ];
+      }
+    });
+  });
+}
+
+function touchActionAction() {
+  return __awaiter(this, void 0, void 0, function () {
+    var contract, providerState, publicKey, response, trx, out_3, _a, _b, error_3;
+
+    return __generator(this, function (_c) {
+      switch (_c.label) {
+        case 0:
+          return [4
+          /*yield*/
+          , Contract()];
+
+        case 1:
+          contract = _c.sent();
+          return [4
+          /*yield*/
+          , ever.getProviderState()];
+
+        case 2:
+          providerState = _c.sent();
+          publicKey = providerState.permissions.accountInteraction.publicKey;
+          console.error("touchActionAction publicKey=".concat(publicKey));
+          _c.label = 3;
+
+        case 3:
+          _c.trys.push([3, 6,, 7]);
+
+          return [4
+          /*yield*/
+          , contract.methods.touch({}).sendExternal({
+            publicKey: publicKey,
+            withoutSignature: true
+          })];
+
+        case 4:
+          response = _c.sent();
+          console.log(response);
+          trx = response.transaction;
+          _b = (_a = "aborted=".concat(trx.aborted, " <a href=\"")).concat;
+          return [4
+          /*yield*/
+          , explorerTransactionDetails(trx.id.hash)];
+
+        case 5:
+          out_3 = _b.apply(_a, [_c.sent(), "\">trx="]).concat(trx.id.hash, "</a>");
+          behavior('out', function (elem) {
+            return elem.innerHTML = out_3;
+          });
+          return [3
+          /*break*/
+          , 7];
+
+        case 6:
+          error_3 = _c.sent();
+          console.error(error_3);
+          return [3
+          /*break*/
+          , 7];
+
+        case 7:
+          return [2
+          /*return*/
+          ];
+      }
+    });
+  });
+}
+
+function explorerTransactionDetails(hash) {
+  return __awaiter(this, void 0, void 0, function () {
+    var providerState;
+    return __generator(this, function (_a) {
+      switch (_a.label) {
+        case 0:
+          return [4
+          /*yield*/
+          , ever.getProviderState()];
+
+        case 1:
+          providerState = _a.sent();
+
+          switch (providerState.selectedConnection) {
+            case 'mainnet':
+              return [2
+              /*return*/
+              , "https://ever.live/transactions/transactionDetails?id=".concat(hash)];
+
+            case 'testnet':
+              return [2
+              /*return*/
+              , "https://net.ever.live/transactions/transactionDetails?id=".concat(hash)];
+
+            case 'localnet':
+              return [2
+              /*return*/
+              , "http://localhost/transactions/transactionDetails?id=".concat(hash)];
+
+            default:
+              return [2
+              /*return*/
+              , "#".concat(hash)];
+          }
+
+          return [2
+          /*return*/
+          ];
+      }
+    });
+  });
+}
+
 function requestPermissions() {
   return ever.requestPermissions({
     permissions: ['basic', 'accountInteraction']
@@ -1924,33 +2135,239 @@ function connect() {
   });
 }
 
-function setNetworkChanged(network) {
-  var mod = network === 'mainnet' ? 'success' : 'secondary';
-  behavior('network', function (elem) {
-    return elem.innerHTML = "<span class=\"badge bg-".concat(mod, "\">").concat(network, "</span>");
+function checkConnect() {
+  return __awaiter(this, void 0, void 0, function () {
+    var providerState, permissions, network, connectText, providerState_1, account_1;
+    return __generator(this, function (_a) {
+      switch (_a.label) {
+        case 0:
+          return [4
+          /*yield*/
+          , ever.getProviderState()];
+
+        case 1:
+          providerState = _a.sent();
+          permissions = providerState.permissions;
+          network = providerState.selectedConnection;
+          if (!!permissions.accountInteraction) return [3
+          /*break*/
+          , 2];
+          behavior('connect', function (elem) {
+            return elem.onclick = requestPermissions;
+          });
+          switchScreen("login");
+
+          connectText = function connectText(elem) {
+            var disabled = !contractAddress(network);
+            if ("disabled" in elem) elem.disabled = disabled;
+            elem.innerText = disabled ? "Contract not deployd into ".concat(network) : "Connect with ".concat(network, " for interact contract");
+          };
+
+          behavior('connect', connectText);
+          return [3
+          /*break*/
+          , 6];
+
+        case 2:
+          return [4
+          /*yield*/
+          , ever.getProviderState()];
+
+        case 3:
+          providerState_1 = _a.sent();
+          return [4
+          /*yield*/
+          , ever.subscribe('transactionsFound', {
+            address: contractAddress(providerState_1.selectedConnection)
+          })];
+
+        case 4:
+          _a.sent().on('data', function (event) {
+            console.log(':', {
+              address: event.address,
+              transactions: event.transactions,
+              info: event.info
+            });
+          });
+
+          return [4
+          /*yield*/
+          , ever.subscribe('contractStateChanged', {
+            address: contractAddress(providerState_1.selectedConnection)
+          })];
+
+        case 5:
+          _a.sent().on('data', function (event) {
+            console.log('permissionsChanged:', {
+              address: event.address,
+              state: event.state
+            });
+          });
+
+          switchScreen("main");
+          account_1 = permissions.accountInteraction;
+          behavior('address', function (elem) {
+            return elem.innerText = account_1.address.toString();
+          });
+          behavior('publicKey', function (elem) {
+            return elem.innerText = account_1.publicKey.toString();
+          });
+          behavior('timestampAction', function (elem) {
+            return elem.onclick = timestampAction;
+          });
+          behavior('renderHelloWorldAction', function (elem) {
+            return elem.onclick = renderHelloWorldAction;
+          });
+          behavior('touchActionAction', function (elem) {
+            return elem.onclick = touchActionAction;
+          });
+          _a.label = 6;
+
+        case 6:
+          return [2
+          /*return*/
+          ];
+      }
+    });
   });
-  behavior('connect', function (elem) {
-    var disabled = !contractAddress(network);
-    if ("disabled" in elem) elem.disabled = disabled;
-    elem.innerText = disabled ? "Contract not deployd into ".concat(network) : "Connect with ".concat(network, " for interact contract");
+}
+
+function setNetworkChanged(network) {
+  return __awaiter(this, void 0, void 0, function () {
+    var mod, out;
+    return __generator(this, function (_a) {
+      switch (_a.label) {
+        case 0:
+          mod = network === 'mainnet' ? 'success' : 'secondary';
+          out = "<span class=\"badge bg-".concat(mod, "\">").concat(network, "</span>");
+          behavior('network', function (elem) {
+            return elem.innerHTML = out;
+          });
+          return [4
+          /*yield*/
+          , checkConnect()];
+
+        case 1:
+          _a.sent();
+
+          return [2
+          /*return*/
+          ];
+      }
+    });
   });
 }
 
 function contractAddress(network, name) {
+  var _a;
+
   if (name === void 0) {
     name = "App";
   }
 
-  if (App_addr_1.default[network] && App_addr_1.default[network][name]) {
-    return new everscale_inpage_provider_1.Address(App_addr_1.default[network][name]);
-  }
+  return new everscale_inpage_provider_1.Address((_a = App_addr_1.default[network][name]) !== null && _a !== void 0 ? _a : "");
+}
 
-  return null;
+function Contract() {
+  return __awaiter(this, void 0, void 0, function () {
+    var providerState, address;
+    return __generator(this, function (_a) {
+      switch (_a.label) {
+        case 0:
+          return [4
+          /*yield*/
+          , ever.getProviderState()];
+
+        case 1:
+          providerState = _a.sent();
+          address = contractAddress(providerState.selectedConnection);
+          return [2
+          /*return*/
+          , new ever.Contract(App_abi_1.default, address)];
+      }
+    });
+  });
+}
+
+function switchScreen(to) {
+  ["extension", "login", "main"].forEach(function (screen) {
+    var switcher = function switcher(elem) {
+      return elem.style.display = to === screen ? 'block' : 'none';
+    };
+
+    behavior(screen, switcher);
+  });
+}
+
+function mainFlow() {
+  return __awaiter(this, void 0, void 0, function () {
+    var providerState;
+
+    var _this = this;
+
+    return __generator(this, function (_a) {
+      switch (_a.label) {
+        case 0:
+          return [4
+          /*yield*/
+          , ever.getProviderState()];
+
+        case 1:
+          providerState = _a.sent();
+          return [4
+          /*yield*/
+          , setNetworkChanged(providerState.selectedConnection)];
+
+        case 2:
+          _a.sent();
+
+          return [4
+          /*yield*/
+          , ever.subscribe('networkChanged')];
+
+        case 3:
+          _a.sent().on('data', function (event) {
+            console.log('networkChanged:', event.selectedConnection);
+            setNetworkChanged(event.selectedConnection);
+          });
+
+          return [4
+          /*yield*/
+          , ever.subscribe('permissionsChanged')];
+
+        case 4:
+          _a.sent().on('data', function (event) {
+            return __awaiter(_this, void 0, void 0, function () {
+              return __generator(this, function (_a) {
+                switch (_a.label) {
+                  case 0:
+                    console.log('permissionsChanged:', event.permissions);
+                    return [4
+                    /*yield*/
+                    , checkConnect()];
+
+                  case 1:
+                    _a.sent();
+
+                    return [2
+                    /*return*/
+                    ];
+                }
+              });
+            });
+          });
+
+          return [2
+          /*return*/
+          ];
+      }
+    });
+  });
 }
 
 function App() {
   return __awaiter(this, void 0, void 0, function () {
-    var providerState, address, contract, timestamp, error_1;
+    var error_4;
     return __generator(this, function (_a) {
       switch (_a.label) {
         case 0:
@@ -1959,70 +2376,45 @@ function App() {
           , ever.hasProvider()];
 
         case 1:
-          if (!_a.sent()) {
-            behavior('extension', function (elem) {
-              return elem.style.display = 'block';
-            });
-          } else {
-            behavior('extension', function (elem) {
-              return elem.style.display = 'none';
-            });
-            behavior('main', function (elem) {
-              return elem.style.display = 'block';
-            });
-            behavior('connect', function (elem) {
-              return elem.onclick = requestPermissions;
-            });
-          }
+          if (!_a.sent()) return [3
+          /*break*/
+          , 7];
+          _a.label = 2;
+
+        case 2:
+          _a.trys.push([2, 5,, 6]);
 
           return [4
           /*yield*/
           , ever.ensureInitialized()];
 
-        case 2:
+        case 3:
           _a.sent();
 
           return [4
           /*yield*/
-          , ever.getProviderState()];
-
-        case 3:
-          providerState = _a.sent();
-          setNetworkChanged(providerState.selectedConnection);
-          return [4
-          /*yield*/
-          , ever.subscribe('networkChanged')];
+          , mainFlow()];
 
         case 4:
-          _a.sent().on('data', function (event) {
-            setNetworkChanged(event.selectedConnection);
-          });
+          _a.sent();
 
-          address = contractAddress(providerState.selectedConnection);
-          console.log('contractAddress:', address);
-          contract = new ever.Contract(App_abi_1.default, address);
-          _a.label = 5;
+          return [3
+          /*break*/
+          , 6];
 
         case 5:
-          _a.trys.push([5, 7,, 8]);
-
-          return [4
-          /*yield*/
-          , contract.methods.timestamp({}).call()];
+          error_4 = _a.sent();
+          throw error_4;
+        // TODO handle it
 
         case 6:
-          timestamp = _a.sent();
-          console.log('timestamp:', timestamp);
           return [3
           /*break*/
           , 8];
 
         case 7:
-          error_1 = _a.sent();
-          console.error(error_1);
-          return [3
-          /*break*/
-          , 8];
+          switchScreen("extension");
+          _a.label = 8;
 
         case 8:
           return [2
@@ -2033,7 +2425,9 @@ function App() {
   });
 }
 
-App().catch(console.error);
+App().catch(function (error) {
+  return console.error(error);
+});
 },{"everscale-inpage-provider":"../node_modules/everscale-inpage-provider/dist/index.js","../build/App.abi":"../build/App.abi.ts","../build/App.addr":"../build/App.addr.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -2062,7 +2456,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "46847" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42039" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
