@@ -8,14 +8,15 @@ function behavior(name: string, fn: (elem: HTMLElement | HTMLButtonElement | HTM
     document.querySelectorAll(`[data-behavior=${name}]`).forEach(fn);
 }
 
+const innerText = (text: string) => (elem: HTMLElement | HTMLButtonElement) => {
+    elem.innerText = text;
+}
+
 async function timestampAction() {
     const contract = await Contract();
     try {
         const out = await contract.methods.timestamp({}).call();
-        behavior(
-            'out',
-            elem => elem.innerText = out.timestamp
-        );
+        behavior('out', innerText(out.timestamp));
     } catch (error) {
         console.error(error);
     }
@@ -25,10 +26,7 @@ async function renderHelloWorldAction() {
     const contract = await Contract();
     try {
         const out = await contract.methods.renderHelloWorld({}).call();
-        behavior(
-            'out',
-            elem => elem.innerText = out.value0
-        );
+        behavior('out', innerText(out.value0));
     } catch (error) {
         console.error(error);
     }
@@ -120,8 +118,8 @@ async function checkConnect() {
         });
         switchScreen("main");
         const account = permissions.accountInteraction;
-        behavior('address', elem => elem.innerText = account.address.toString());
-        behavior('publicKey', elem => elem.innerText = account.publicKey.toString());
+        behavior('address', innerText(account.address.toString()));
+        behavior('publicKey', innerText(account.publicKey.toString()));
         behavior('timestampAction', elem => elem.onclick = timestampAction);
         behavior('renderHelloWorldAction', elem => elem.onclick = renderHelloWorldAction);
         behavior('touchActionAction', elem => elem.onclick = touchActionAction);
