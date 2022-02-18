@@ -7,14 +7,14 @@
   "scripts": {
     "nvm": "echo $npm_package_engines_node | cut -d'=' -f2",
     "build-asset": "convert-svg-to-png --width 48 asset/icon.svg",
-    "build-web": "yarn build-deps && parcel build --no-source-maps --out-dir dist --out-file index.html src/App.html",
+    "build-web": "yarn build-deps && parcel build --public-url ${URL:-/} --no-source-maps --out-dir dist --out-file index.html src/App.html",
     "build-abi": "yarn contract-wrap && node -e 'console.log(`export default ${JSON.stringify(require(\"./build/App.abi\").abi)} as const`)' > build/App.abi.ts",
     "build-deps": "yarn build-asset && yarn build-abi",
     "contract-wrap": "yarn contract-compile && everdev js wrap --export commonjs-default --output App.abi.js build/App",
     "contract-compile": "everdev sol compile --code --output-dir build src/App.sol",
     "build": "yarn build-web",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "gh-pages": "yarn build && gh-pages --repo $(git remote --verbose | grep push | cut -f2 | cut -d' ' -f1) --dist dist",
+    "gh-pages": "URL=/$npm_package_name/ yarn build && gh-pages --repo $(git remote --verbose | grep push | cut -f2 | cut -d' ' -f1) --dist dist",
     "serve": "yarn build && serve -s dist -l 3000",
     "prestart": "yarn build-deps",
     "start": "parcel src/App.html"

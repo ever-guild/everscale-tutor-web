@@ -19,3 +19,9 @@ yarn install
 ```
 yarn start
 ```
+
+## Publish
+
+```
+yarn gh-pages
+```
