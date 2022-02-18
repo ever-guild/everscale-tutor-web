@@ -89,7 +89,7 @@ async function checkConnect() {
     const providerState = await ever.getProviderState();
     const permissions = providerState.permissions;
     const network = providerState.selectedConnection;
-    if (!permissions.accountInteraction) {
+    if (!contractAddress(network) || !permissions.accountInteraction) {
         behavior('connect', elem => elem.onclick = requestPermissions);
         switchScreen("login");
         const connectText = elem => {
@@ -134,8 +134,11 @@ async function setNetworkChanged(network: string) {
     await checkConnect();
 }
 
-function contractAddress(network: string, name = "App"): Address {
-    return new Address(addr[network][name] ?? "");
+function contractAddress(network: string, name = "App"): Address | null {
+    if (addr[network] && addr[network][name]) {
+        return new Address(addr[network][name]);
+    }
+    return null
 }
 
 async function Contract() {
