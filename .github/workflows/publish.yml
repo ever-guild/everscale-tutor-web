@@ -1,0 +1,21 @@
+name: Publish
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          cache: 'yarn'
+          cache-dependency-path: '**/yarn.lock'
+      - run: yarn install
+      - run: yarn build-prod
+      - run: |
+          git remote set-url origin https://git:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          npx gh-pages --dist dist --user "github-actions-bot <support+actions@github.com>"
