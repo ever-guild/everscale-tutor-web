@@ -74,6 +74,11 @@ function requestPermissions() {
     });
 }
 
+async function disconnectAction() {
+    console.log('disconnectAction')
+    await ever.disconnect();
+}
+
 async function connect() {
     await ever.requestPermissions({
         permissions: [
@@ -123,6 +128,7 @@ async function checkConnect() {
         behavior('timestampAction', elem => elem.onclick = timestampAction);
         behavior('renderHelloWorldAction', elem => elem.onclick = renderHelloWorldAction);
         behavior('touchAction', elem => elem.onclick = touchAction);
+        behavior('disconnectAction', elem => elem.onclick = disconnectAction);
     }
 }
 async function setNetworkChanged(network: string) {
