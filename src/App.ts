@@ -32,11 +32,11 @@ async function renderHelloWorldAction() {
     }
 }
 
-async function touchActionAction() {
+async function touchAction() {
     const contract = await Contract();
     const providerState = await ever.getProviderState();
     const publicKey = providerState.permissions.accountInteraction.publicKey;
-    console.error(`touchActionAction publicKey=${publicKey}`);
+    console.error(`touchAction publicKey=${publicKey}`);
     try {
         const response = await contract.methods.touch({}).sendExternal({
             publicKey,
@@ -122,7 +122,7 @@ async function checkConnect() {
         behavior('publicKey', innerText(account.publicKey.toString()));
         behavior('timestampAction', elem => elem.onclick = timestampAction);
         behavior('renderHelloWorldAction', elem => elem.onclick = renderHelloWorldAction);
-        behavior('touchActionAction', elem => elem.onclick = touchActionAction);
+        behavior('touchAction', elem => elem.onclick = touchAction);
     }
 }
 async function setNetworkChanged(network: string) {
